@@ -19,6 +19,7 @@ Package.onUse((api) => {
       'aldeed:autoform@6.3.0',
       'check',
       'aldeed:autoform-select2',
+      'spacebars-compiler',
       'universe:i18n',
       'universe:i18n-blaze',
       'abate:autoform-components',
@@ -32,10 +33,14 @@ Package.onUse((api) => {
   ], 'client')
   // api.use('markdown', ['client','server'],{weak: true});
 
-  api.add_files('server/publications.js', 'server')
+  api.add_files([
+    'server/publications.js',
+    'server/init.js',
+  ], 'server')
   api.add_files(
     [
       'both/collection.js',
+      'both/helpers.js',
       'both/methods.js'],
     ['client', 'server'],
   )

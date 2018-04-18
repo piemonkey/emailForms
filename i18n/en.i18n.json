@@ -2,7 +2,9 @@
   "template_name": "Template Name",
   "template_name_help": "This is just a intenal identifier",
   "template_subject": "Template Subject",
+  "template_context": "Template Context",
   "template_notes": "Template Description",
   "from": "From",
-  "template_body": "Template Body"
+  "template_body": "Template Body",
+  "new_template": "New Template"
 }

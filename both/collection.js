@@ -6,20 +6,61 @@ import i18n from 'meteor/universe:i18n'
 SimpleSchema.extendOptions(['autoform'])
 
 export const EmailTemplate = new Mongo.Collection('emailTemplate')
+export const EmailTemplateContext = new Mongo.Collection('emailTemplateContext')
 
 const getFrom = (function getFrom() {
   const t = EmailTemplate.find({}).map(t => ({ value: t.from, label: t.from }))
   return [...new Set(t)]
 })
 
+const getContext = (function getContext() {
+  const t = EmailTemplateContext.find().map(t => ({ value: t._id, label: t.name }))
+  return t
+})
+
 export const Schemas = {}
+
+Schemas.EmailTemplateContext = new SimpleSchema({
+  name: {
+    type: String,
+    label: () => i18n.__('abate:email-forms', 'context_name'),
+    // autoform: {
+    //   afFieldHelpText: () => i18n.__('abate:email-forms', 'template_name_help'),
+    // },
+  },
+  variables: {
+    type: Array,
+  },
+  'variables.$': {
+    type: new SimpleSchema({
+      name: String,
+      description: String,
+    }),
+  },
+})
+
+EmailTemplateContext.attachSchema(Schemas.EmailTemplateContext)
 
 Schemas.EmailTemplate = new SimpleSchema({
   name: {
     type: String,
     label: () => i18n.__('abate:email-forms', 'template_name'),
+    // autoform: {
+    //   afFieldHelpText: () => i18n.__('abate:email-forms', 'template_name_help'),
+    // },
+  },
+
+  context: {
+    type: String,
+    label: () => i18n.__('abate:email-forms', 'template_context'),
     autoform: {
-      afFieldHelpText: i18n.__('abate:email-forms', 'template_name_help'),
+      type: 'select2',
+      options: getContext,
+      afFieldInput: {
+        select2Options: () => ({
+          width: '100%',
+        }),
+      },
     },
   },
 
