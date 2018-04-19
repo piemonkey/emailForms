@@ -3,26 +3,34 @@
 </template>
 
 <template name="emailForms">
-  <div class="row">
-    <div class="col">
-      <select id="templatepicker" class="">
-        {{#each templatelist}}
-      		<option value="{{_id}}" {{selected}}>{{name}}</option>
-        {{/each}}
-      </select>
+  <div class="container-fluid">
+    <div class="row mb-4 mt-4">
+      <div class="col-3">
+        <div id="templatepicker"></div>
+      </div>
+      <div class="col"></div>
+      {{#unless selected}}
+        <div class="col-2">
+          <button class="btn btn-default"
+            data-action="new-template">{{__ ".new_template"}}</button>
+        </div>
+      {{else}}
+        <div class="col-2">
+          <button class="btn btn-default"
+            data-action="remove-template"
+            data-id="{{selected._id}}">{{__ ".remove_template"}}</button>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-2">
+          <button class="btn btn-default"
+            data-action="preview-template">{{__ ".preview_template"}}</button>
+        </div>
+      {{/unless}}
     </div>
-    <div class="col-2">
-      <button class="btn btn-default"
-        data-action="new-template">{{__ ".new_template"}}</button>
-    </div>
-    <div class="col-2">
-      <button class="btn btn-default"
-        data-action="preview-template">{{__ ".preview_template"}}</button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      {{> emailFormsTemplate selected}}
+    <div class="row">
+      <div class="col-md-12">
+        {{> emailFormsTemplate selected}}
+      </div>
     </div>
   </div>
 </template>

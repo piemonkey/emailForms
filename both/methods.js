@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import SimpleSchema from 'simpl-schema'
-// import { check } from 'meteor/check'
+import { check } from 'meteor/check'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
 import { EmailTemplate, Schemas } from './collection'
 
@@ -25,7 +25,7 @@ export const insertEmailTemplate = new ValidatedMethod({
 
 export const updateSetting = new ValidatedMethod({
   name: 'emailTemplate.update',
-  validate: (doc) => {
+  validate(doc) {
     Schemas.EmailTemplate.validate(doc.modifier, { clean: true, modifier: true })
   },
   run(doc) {
@@ -35,5 +35,17 @@ export const updateSetting = new ValidatedMethod({
     // // TODO: should be an upsert
     console.log('emailTemplate.update', doc.modifier)
     EmailTemplate.update(doc._id, doc.modifier)
+  },
+})
+
+export const removeEmailTemplate = new ValidatedMethod({
+  name: 'emailTemplate.remove',
+  validate(id) { check(id, String) },
+  run(id) {
+    // if (!Volunteers.isManager()) {
+    //   throw new Meteor.Error('unauthorized', "You don't have permission for this operation")
+    // }
+    console.log('emailTemplate.remove', id)
+    EmailTemplate.remove(id)
   },
 })

@@ -7,32 +7,38 @@ const applyContext = (function applyContext(body, context) {
   return content
 })
 
-export const getContext = (function getContext(cntx, user) {
-  let context = {
-    site_url: Meteor.absoluteUrl(),
-  }
-  switch (cntx.name) {
-    case 'User': {
-      context = _.extend(context, {
-        firstName: user.profile.firstName,
-        email: user.emails[0].address,
-      })
-      break
+export const getContext = (function getContext(cntxlist, user) {
+  const context = {}
+  cntxlist.forEach((cntx) => {
+    switch (cntx.name) {
+      case 'User': {
+        context[`${cntx.namespace}`] = {
+          firstName: user.profile.firstName,
+          email: user.emails[0].address,
+        }
+        break
+      }
+      case 'Site': {
+        context[`${cntx.namespace}`] = {
+          url: Meteor.absoluteUrl(),
+        }
+        break
+      }
+      default:
     }
-    default:
-  }
+  })
   return context
 })
 
 export const previewTemplate = (function previewTemplate(templateName, user, getContext) {
   const template = EmailTemplate.findOne({ name: templateName })
-  const rawcontext = EmailTemplateContext.findOne(template.context)
+  const rawcontext = EmailTemplateContext.find({ _id: { $in: template.context } }).fetch()
   const userRawContext = EmailTemplateContext.findOne({ name: 'User' })
-  const userContext = getContext(userRawContext, user)
+  const userContext = getContext([userRawContext], user)
   const emailContext = getContext(rawcontext, user)
   if (template) {
     return {
-      to: applyContext('{{firstName}} {{email}}', userContext),
+      to: `${userContext.user.firstName} <${userContext.user.email}>`,
       from: template.from,
       subject: applyContext(template.subject, emailContext),
       text: applyContext(template.body, emailContext),

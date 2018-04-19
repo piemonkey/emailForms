@@ -18,6 +18,7 @@ Package.onUse((api) => {
       'aldeed:collection2@3.0.0',
       'aldeed:autoform@6.3.0',
       'check',
+      'underscore',
       'aldeed:autoform-select2',
       'spacebars-compiler',
       'universe:i18n',

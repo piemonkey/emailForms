@@ -6,5 +6,7 @@
   "template_notes": "Template Description",
   "from": "From",
   "template_body": "Template Body",
-  "new_template": "New Template"
+  "new_template": "New Template",
+  "preview_template": "Preview Template",
+  "remove_template": "Remove Template"
 }

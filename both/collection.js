@@ -9,13 +9,21 @@ export const EmailTemplate = new Mongo.Collection('emailTemplate')
 export const EmailTemplateContext = new Mongo.Collection('emailTemplateContext')
 
 const getFrom = (function getFrom() {
-  const t = EmailTemplate.find({}).map(t => ({ value: t.from, label: t.from }))
-  return [...new Set(t)]
+  const options = _.chain(EmailTemplate.find().fetch({}))
+    .unique(e => e._id)
+    .map(e => ({ value: e.from, label: e.from }))
+    .value()
+
+  return options
 })
 
 const getContext = (function getContext() {
-  const t = EmailTemplateContext.find().map(t => ({ value: t._id, label: t.name }))
-  return t
+  const options = _.chain(EmailTemplateContext.find().fetch({}))
+    .unique(e => e._id)
+    .map(e => ({ value: e._id, label: e.name }))
+    .value()
+
+  return options
 })
 
 export const Schemas = {}
@@ -24,9 +32,10 @@ Schemas.EmailTemplateContext = new SimpleSchema({
   name: {
     type: String,
     label: () => i18n.__('abate:email-forms', 'context_name'),
-    // autoform: {
-    //   afFieldHelpText: () => i18n.__('abate:email-forms', 'template_name_help'),
-    // },
+  },
+  namespace: {
+    type: String,
+    label: () => i18n.__('abate:email-forms', 'context_namespace'),
   },
   variables: {
     type: Array,
@@ -45,28 +54,29 @@ Schemas.EmailTemplate = new SimpleSchema({
   name: {
     type: String,
     label: () => i18n.__('abate:email-forms', 'template_name'),
-    // autoform: {
-    //   afFieldHelpText: () => i18n.__('abate:email-forms', 'template_name_help'),
-    // },
   },
 
   context: {
-    type: String,
+    type: Array,
     label: () => i18n.__('abate:email-forms', 'template_context'),
     autoform: {
       type: 'select2',
       options: getContext,
       afFieldInput: {
+        multiple: true,
         select2Options: () => ({
           width: '100%',
+          placeholder: () => i18n.__('abate:email-forms', 'select_context'),
         }),
       },
     },
   },
+  'context.$': String,
 
   from: {
     type: String,
     label: () => i18n.__('abate:email-forms', 'from'),
+    regEx: SimpleSchema.RegEx.Email,
     autoform: {
       type: 'select2',
       options: getFrom,
@@ -75,6 +85,7 @@ Schemas.EmailTemplate = new SimpleSchema({
           tags: true,
           width: '100%',
           allowClear: true,
+          placeholder: () => i18n.__('abate:email-forms', 'select_or_add'),
         }),
       },
     },

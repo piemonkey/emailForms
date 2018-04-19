@@ -1,5 +1,9 @@
 import { EmailTemplate } from '../both/collection'
 import { previewTemplate, getContext } from '../both/helpers'
+import { removeEmailTemplate } from '../both/methods'
+
+// import 'select2'
+// import 'select2/dist/css/select2.css'
 
 Template.emailFormsTemplate.helpers({
   form: () => ({ collection: EmailTemplate }),
@@ -12,37 +16,46 @@ Template.emailForms.onCreated(function onCreated() {
   template.subscribe('emailTemplate')
   template.selected = new ReactiveVar()
   if (template.subscriptionsReady) {
-    template.selected.set(EmailTemplate.findOne())
+    template.selected.set({})
   }
 })
 
-// Template.emailForms.onRendered(() => {
-//
-// })
+Template.emailForms.onRendered(function onRendered() {
+  const template = this
 
-// XXX This is not good. we should use a select2 instead
-Template.emailForms.helpers({
-  templatelist: () => {
-    const l = EmailTemplate.find(
-      {},
-      { fields: { name: 1, _id: 1 }, sort: { name: 1 } },
-    ).map((e) => {
-      e.selected = ''
-      return e
+  template.autorun(() => {
+    const sel = { fields: { name: 1, _id: 1 }, sort: { name: 1 } }
+    // seelct2 uses {id,text} and NOT {value,label}
+    const options = _.chain(EmailTemplate.find().fetch({}, sel))
+      .unique(e => e._id)
+      .map(e => ({ id: e._id, text: e.name }))
+      .value()
+
+    template.$('#templatepicker').select2({
+      placeholder: 'Select an option',
+      data: options,
     })
-    l.push({ name: 'New Template', selected: 'selected' })
-    return l
-  },
+  })
+})
+
+Template.emailForms.helpers({
   selected: () => Template.instance().selected.get(),
 })
 
 Template.emailForms.events({
-  'change #templatepicker': (event, template) => {
-    const id = template.$(event.target).val()
+  'select2:select #templatepicker': (event, template) => {
+    const id = template.$('#templatepicker :selected').val()
     template.selected.set(EmailTemplate.findOne(id))
   },
   'click [data-action="new-template"]': (event, template) => {
     template.selected.set({})
+  },
+
+  'click [data-action="remove-template"]': (event, template) => {
+    const id = template.$(event.target).data('id')
+    removeEmailTemplate.call(id, (err) => {
+      if (err) { console.log(err.reason) } else { template.selected.set({}) }
+    })
   },
   'click [data-action="preview-template"]': (event, template) => {
     const t = Template.instance().selected.get()
