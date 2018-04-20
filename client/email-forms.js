@@ -1,6 +1,5 @@
 import { EmailTemplate } from '../both/collection'
 import { previewTemplate, getContext } from '../both/helpers'
-import { removeEmailTemplate } from '../both/methods'
 
 // import 'select2'
 // import 'select2/dist/css/select2.css'
@@ -52,8 +51,7 @@ Template.emailForms.events({
   },
 
   'click [data-action="remove-template"]': (event, template) => {
-    const id = template.$(event.target).data('id')
-    removeEmailTemplate.call(id, (err) => {
+    Meteor.call('emailTemplate.remove', (err) => {
       if (err) { console.log(err.reason) } else { template.selected.set({}) }
     })
   },

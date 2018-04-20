@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 import SimpleSchema from 'simpl-schema'
 import { check } from 'meteor/check'
-import { ValidatedMethod } from 'meteor/mdg:validated-method'
+// import { ValidatedMethod } from 'meteor/mdg:validated-method'
 import { EmailTemplate, Schemas } from './collection'
 
 SimpleSchema.defineValidationErrorTransform((error) => {
@@ -11,41 +11,35 @@ SimpleSchema.defineValidationErrorTransform((error) => {
   return ddpError
 })
 
-export const insertEmailTemplate = new ValidatedMethod({
+export const insertEmailTemplate = {
   name: 'emailTemplate.insert',
   validate: Schemas.EmailTemplate.validator({ clean: true }),
   run(doc) {
-    // if (!Volunteers.isManager()) {
-    //   throw new Meteor.Error('unauthorized', "You don't have permission for this operation")
-    // }
     console.log('emailTemplate.insert', doc)
     EmailTemplate.insert(doc)
   },
-})
+}
+// new ValidatedMethod(insertEmailTemplate)
 
-export const updateSetting = new ValidatedMethod({
+export const updateEmailTemplate = {
   name: 'emailTemplate.update',
   validate(doc) {
     Schemas.EmailTemplate.validate(doc.modifier, { clean: true, modifier: true })
   },
   run(doc) {
-    // if (!Volunteers.isManager()) {
-    //   throw new Meteor.Error('unauthorized', "You don't have permission for this operation")
-    // }
     // // TODO: should be an upsert
     console.log('emailTemplate.update', doc.modifier)
     EmailTemplate.update(doc._id, doc.modifier)
   },
-})
+}
+// new ValidatedMethod(updateEmailTemplate)
 
-export const removeEmailTemplate = new ValidatedMethod({
+export const removeEmailTemplate = {
   name: 'emailTemplate.remove',
   validate(id) { check(id, String) },
   run(id) {
-    // if (!Volunteers.isManager()) {
-    //   throw new Meteor.Error('unauthorized', "You don't have permission for this operation")
-    // }
     console.log('emailTemplate.remove', id)
     EmailTemplate.remove(id)
   },
-})
+}
+// new ValidatedMethod(removeEmailTemplate)

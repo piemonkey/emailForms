@@ -42,7 +42,9 @@ Package.onUse((api) => {
     [
       'both/collection.js',
       'both/helpers.js',
-      'both/methods.js'],
+      'both/methods.js',
+      'api.js',
+    ],
     ['client', 'server'],
   )
   api.add_files(
@@ -52,6 +54,8 @@ Package.onUse((api) => {
   )
 
   api.add_files(['i18n/en.i18n.json'], ['client', 'server'])
+
+  api.export('EmailForms', ['client', 'server'])
 })
 
 // Package.onTest(function(api) {
