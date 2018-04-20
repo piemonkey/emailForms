@@ -7,8 +7,7 @@ const applyContext = (function applyContext(body, context) {
   return content
 })
 
-export const getContext = (function getContext(cntxlist, user) {
-  const context = {}
+export const getContext = (function getContext(cntxlist, user, context = {}) {
   cntxlist.forEach((cntx) => {
     switch (cntx.name) {
       case 'User': {
@@ -30,15 +29,15 @@ export const getContext = (function getContext(cntxlist, user) {
   return context
 })
 
-export const previewTemplate = (function previewTemplate(templateName, user, getContext) {
+export const previewTemplate = (function previewTemplate(templateName, user, getContext, context = {}) {
   const template = EmailTemplate.findOne({ name: templateName })
   const rawcontext = EmailTemplateContext.find({ _id: { $in: template.context } }).fetch()
   const userRawContext = EmailTemplateContext.findOne({ name: 'User' })
-  const userContext = getContext([userRawContext], user)
-  const emailContext = getContext(rawcontext, user)
+  const userContext = getContext([userRawContext], user, context)
+  const emailContext = getContext(rawcontext, user, userContext)
   if (template) {
     return {
-      to: `${userContext.user.firstName} <${userContext.user.email}>`,
+      to: `${emailContext.user.firstName} <${emailContext.user.email}>`,
       from: template.from,
       subject: applyContext(template.subject, emailContext),
       text: applyContext(template.body, emailContext),

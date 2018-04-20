@@ -15,7 +15,7 @@ Template.emailForms.onCreated(function onCreated() {
   template.subscribe('emailTemplate')
   template.selected = new ReactiveVar()
   if (template.subscriptionsReady) {
-    template.selected.set({})
+    template.selected.set()
   }
 })
 
@@ -30,7 +30,7 @@ Template.emailForms.onRendered(function onRendered() {
       .map(e => ({ id: e._id, text: e.name }))
       .value()
 
-    template.$('#templatepicker').select2({
+    const select2Instance = template.$('#templatepicker').select2({
       placeholder: 'Select an option',
       data: options,
     })
@@ -47,13 +47,15 @@ Template.emailForms.events({
     template.selected.set(EmailTemplate.findOne(id))
   },
   'click [data-action="new-template"]': (event, template) => {
-    template.selected.set({})
+    template.selected.set()
   },
 
   'click [data-action="remove-template"]': (event, template) => {
-    Meteor.call('emailTemplate.remove', (err) => {
-      if (err) { console.log(err.reason) } else { template.selected.set({}) }
-    })
+    if (template.selected.get()) {
+      Meteor.call('emailTemplate.remove', (err) => {
+        if (err) { console.log(err.reason) } else { template.selected.set() }
+      })
+    }
   },
   'click [data-action="preview-template"]': (event, template) => {
     const t = Template.instance().selected.get()

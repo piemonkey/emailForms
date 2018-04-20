@@ -18,7 +18,7 @@ const getFrom = (function getFrom() {
 })
 
 const getContext = (function getContext() {
-  const options = _.chain(EmailTemplateContext.find().fetch({}))
+  const options = _.chain(EmailTemplateContext.find().fetch())
     .unique(e => e._id)
     .map(e => ({ value: e._id, label: e.name }))
     .value()
@@ -63,6 +63,8 @@ Schemas.EmailTemplate = new SimpleSchema({
       type: 'select2',
       options: getContext,
       afFieldInput: {
+        // XXX not sure how to set the default here ...
+        // defaultValue() { return EmailTemplateContext.find({ name: 'User' }).fetch() },
         multiple: true,
         select2Options: () => ({
           width: '100%',
