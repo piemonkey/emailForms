@@ -31,6 +31,9 @@ export const getContext = (function getContext(cntxlist, user, context = {}) {
 
 export const previewTemplate = (function previewTemplate(templateName, user, getContextClient, context = {}) {
   const template = EmailTemplate.findOne({ name: templateName })
+  if (!template) {
+    throw new Meteor.Error('500', `No email template defined ${templateName}`)
+  }
 
   // Run getContextClient to initialize the context from the Client
   const rawcontext = EmailTemplateContext.find({ _id: { $in: template.context } }).fetch()
