@@ -1,0 +1,12 @@
+{
+  "template_name": "Nombre de la plantilla",
+  "template_name_help": "Esto es solamente un identificador interno",
+  "template_subject": "Asunto de la plantilla",
+  "template_context": "Contexto de la plantilla",
+  "template_notes": "Descripción de la plantilla",
+  "from": "Desde",
+  "template_body": "Cuerpo de la plantilla",
+  "new_template": "Nueva plantilla",
+  "preview_template": "Vista previa de la plantilla",
+  "remove_template": "Eliminar plantilla"
+}

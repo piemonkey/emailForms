@@ -1,0 +1,12 @@
+{
+  "template_name": "Nom de modèle",
+  "template_name_help": "Ceci est juste un identifiant interne",
+  "template_subject": "Sujet du modèle",
+  "template_context": "Contexte du modèle",
+  "template_notes": "Description du modèle",
+  "from": "De la part de",
+  "template_body": "Corps du modèle",
+  "new_template": "Nouveau modèle",
+  "preview_template": "Aperçu du modèle",
+  "remove_template": "Supprimer le modèle"
+}
