@@ -1,9 +1,6 @@
 import { EmailTemplate } from '../both/collection'
 import { previewTemplate, getContext } from '../both/helpers'
 
-// import 'select2'
-// import 'select2/dist/css/select2.css'
-
 Template.emailFormsTemplate.helpers({
   form: () => ({ collection: EmailTemplate }),
   data: () => (Template.currentData()),

@@ -1,9 +1,23 @@
 import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
 import { EmailTemplate, EmailTemplateContext } from '../both/collection'
 
+const contextHelpers = {
+  $gte: (a, b) => a => b,
+  $gt: (a, b) => a > b,
+  $lt: (a, b) => a < b,
+  $lte: (a, b) => a <= b,
+  $eq: (a, b) => a == b,
+  $ne: (a, b) => a != b,
+  $and: (a, b) => a && b,
+  $or: (a, b) => a || b,
+  $not: (a) => !a,
+  $len: l => l.length,
+}
+
 const applyContext = (function applyContext(body, context) {
   const compiled = SpacebarsCompiler.compile(body, { isBody: true })
-  const content = Blaze.toHTML(Blaze.With(context, eval(compiled)))
+  const mergedContext = { ...context, ...contextHelpers }
+  const content = Blaze.toHTML(Blaze.With(mergedContext, eval(compiled)))
   return content
 })
 
@@ -12,6 +26,7 @@ export const getContext = (function getContext(cntxlist, user, context = {}) {
     switch (cntx.name) {
       case 'User': {
         context[`${cntx.namespace}`] = {
+          nickName: user.profile.nickname,
           firstName: user.profile.firstName,
           email: user.emails[0].address,
         }
