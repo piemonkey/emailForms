@@ -10,7 +10,7 @@ export const EmailTemplateContext = new Mongo.Collection('emailTemplateContext')
 
 const getFrom = (function getFrom() {
   const options = _.chain(EmailTemplate.find().fetch({}))
-    .unique(e => e._id)
+    .unique(e => e.from)
     .map(e => ({ value: e.from, label: e.from }))
     .value()
 

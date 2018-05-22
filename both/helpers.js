@@ -1,23 +1,26 @@
 import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
+import moment from 'moment'
 import { EmailTemplate, EmailTemplateContext } from '../both/collection'
 
 const contextHelpers = {
-  $gte: (a, b) => a => b,
+  $gte: (a, b) => a >= b,
   $gt: (a, b) => a > b,
   $lt: (a, b) => a < b,
   $lte: (a, b) => a <= b,
-  $eq: (a, b) => a == b,
-  $ne: (a, b) => a != b,
+  $eq: (a, b) => a === b,
+  $ne: (a, b) => a !== b,
   $and: (a, b) => a && b,
   $or: (a, b) => a || b,
-  $not: (a) => !a,
+  $not: a => !a,
   $len: l => l.length,
+  $formatDateTime: date => moment(date).format('MMM Do, HH:mm'),
 }
+
 
 const applyContext = (function applyContext(body, context) {
   const compiled = SpacebarsCompiler.compile(body, { isBody: true })
-  const mergedContext = { ...context, ...contextHelpers }
-  const content = Blaze.toHTML(Blaze.With(mergedContext, eval(compiled)))
+  Object.entries(contextHelpers).forEach(([key, value]) => Blaze.registerHelper(key, value))
+  const content = Blaze.toHTML(Blaze.With(context, eval(compiled)))
   return content
 })
 
@@ -25,16 +28,24 @@ export const getContext = (function getContext(cntxlist, user, context = {}) {
   cntxlist.forEach((cntx) => {
     switch (cntx.name) {
       case 'User': {
-        context[`${cntx.namespace}`] = {
+        const contextObj = {
           nickName: user.profile.nickname,
           firstName: user.profile.firstName,
           email: user.emails[0].address,
         }
+        console.log(contextObj)
+        if (context[`${cntx.namespace}`]) {
+          context[`${cntx.namespace}`] = _.extend(context[`${cntx.namespace}`], contextObj)
+        } else {
+          context[`${cntx.namespace}`] = contextObj
+        }
         break
       }
       case 'Site': {
-        context[`${cntx.namespace}`] = {
-          url: Meteor.absoluteUrl(),
+        if (context[`${cntx.namespace}`]) {
+          context[`${cntx.namespace}`] = _.extend(context[`${cntx.namespace}`], { url: Meteor.absoluteUrl() })
+        } else {
+          context[`${cntx.namespace}`] = { url: Meteor.absoluteUrl() }
         }
         break
       }
@@ -61,7 +72,7 @@ export const previewTemplate = (function previewTemplate(templateName, user, get
     to: `${emailContext.user.firstName} <${emailContext.user.email}>`,
     from: template.from,
     subject: applyContext(template.subject, emailContext),
-    body: applyContext(template.body, emailContext),
+    text: applyContext(template.body, emailContext),
     templateId: template._id,
   }
   return doc
