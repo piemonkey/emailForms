@@ -55,7 +55,7 @@ Template.emailForms.events({
     }
   },
   'click [data-action="preview-template"]': (event, template) => {
-    const t = Template.instance().selected.get()
+    const t = template.selected.get()
     const preview = previewTemplate(t.name, Meteor.user(), getContext)
     // TODO show the preview in a modal
     console.log(preview)

@@ -1,6 +1,9 @@
 import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
-import moment from 'moment'
+import { moment } from 'meteor/momentjs:moment'
 import { EmailTemplate, EmailTemplateContext } from '../both/collection'
+
+/* XXX this should be a user setting */
+moment.tz.setDefault('Europe/Paris')
 
 const contextHelpers = {
   $gte: (a, b) => a >= b,
@@ -13,9 +16,9 @@ const contextHelpers = {
   $or: (a, b) => a || b,
   $not: a => !a,
   $len: l => l.length,
+  $formatDate: date => moment(date).format('MMM Do'),
   $formatDateTime: date => moment(date).format('MMM Do, HH:mm'),
 }
-
 
 const applyContext = (function applyContext(body, context) {
   const compiled = SpacebarsCompiler.compile(body, { isBody: true })
