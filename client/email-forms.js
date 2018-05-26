@@ -1,5 +1,8 @@
-import { EmailTemplate } from '../both/collection'
+import { AutoFormComponents } from 'meteor/abate:autoform-components'
+import { EmailTemplate, EmailTemplateContext } from '../both/collection'
 import { previewTemplate, getContext } from '../both/helpers'
+
+Template.emailFormsPreview.bindI18nNamespace('abate:email-forms')
 
 Template.emailFormsTemplate.helpers({
   form: () => ({ collection: EmailTemplate }),
@@ -27,7 +30,7 @@ Template.emailForms.onRendered(function onRendered() {
       .map(e => ({ id: e._id, text: e.name }))
       .value()
 
-    const select2Instance = template.$('#templatepicker').select2({
+    template.$('#templatepicker').select2({
       placeholder: 'Select an option',
       data: options,
     })
@@ -57,7 +60,13 @@ Template.emailForms.events({
   'click [data-action="preview-template"]': (event, template) => {
     const t = template.selected.get()
     const preview = previewTemplate(t.name, Meteor.user(), getContext)
+    preview.contexts = EmailTemplateContext.find({ _id: { $in: t.context } }).fetch()
     // TODO show the preview in a modal
     console.log(preview)
+
+    AutoFormComponents.ModalShowWithTemplate(
+      'emailFormsPreview',
+      preview, 'Email Preview',
+    )
   },
 })

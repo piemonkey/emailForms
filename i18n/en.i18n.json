@@ -8,5 +8,12 @@
   "template_body": "Template Body",
   "new_template": "New Template",
   "preview_template": "Preview Template",
-  "remove_template": "Remove Template"
+  "remove_template": "Remove Template",
+  "to": "To",
+  "subject": "Subject",
+  "available_contexts": "Available Contexts",
+  "name": "Name",
+  "description": "Description",
+  "namespace": "Namespace",
+  "variables": "Variables"
 }

@@ -15,7 +15,7 @@ const contextHelpers = {
   $and: (a, b) => a && b,
   $or: (a, b) => a || b,
   $not: a => !a,
-  $len: l => l.length,
+  $len: (l) => { if (l) { return l.length } return 0 },
   $formatDate: date => moment(date).format('MMM Do'),
   $formatDateTime: date => moment(date).format('MMM Do, HH:mm'),
 }
@@ -36,7 +36,6 @@ export const getContext = (function getContext(cntxlist, user, context = {}) {
           firstName: user.profile.firstName,
           email: user.emails[0].address,
         }
-        console.log(contextObj)
         if (context[`${cntx.namespace}`]) {
           context[`${cntx.namespace}`] = _.extend(context[`${cntx.namespace}`], contextObj)
         } else {

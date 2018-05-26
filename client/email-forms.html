@@ -33,3 +33,31 @@
     </div>
   </div>
 </template>
+
+<template name="emailFormsPreview">
+  <strong>{{__ ".from"}}:</strong> {{from}}<br>
+  <strong>{{__ ".to"}}:</strong> {{to}}<br>
+  <strong>{{__ ".subject"}}:</strong> {{subject}}<br>
+  <hr>
+  <p>
+    <pre>
+      {{text}}
+    </pre>
+  </p>
+  <hr>
+  <h4>{{__ ".available_contexts"}}</h4>
+  <ul>
+    {{#each contexts}}
+      <li>
+        <strong>{{__ ".name"}}:</strong> {{name}}<br>
+        <strong>{{__ ".namespace"}}:</strong> {{namespace}}<br>
+        <strong>{{__ ".variables"}}:</strong><br>
+        <ul>
+          {{#each variables}}
+            <li><strong>{{name}}</strong> : {{description}}</li>
+          {{/each}}
+        </ul>
+      </li>
+    {{/each}}
+  </ul>
+</template>
