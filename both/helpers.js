@@ -57,28 +57,34 @@ export const getContext = (function getContext(cntxlist, user, context = {}) {
   return context
 })
 
-export const previewTemplate = (function previewTemplate(templateName, user, getContextClient, context = {}) {
-  const template = EmailTemplate.findOne({ name: templateName })
-  if (!template) {
-    throw new Meteor.Error('500', `No email template defined ${templateName}`)
-  }
+export const previewTemplate = (templateName, user, getContextClient, context = {}) => {
+  try {
+    const template = EmailTemplate.findOne({ name: templateName })
+    if (!template) {
+      throw new Meteor.Error('500', `No email template defined ${templateName}`)
+    }
 
-  // Run getContextClient to initialize the context from the Client
-  const rawcontext = EmailTemplateContext.find({ _id: { $in: template.context } }).fetch()
-  const clientContext = getContextClient(rawcontext, user, context)
+    // Run getContextClient to initialize the context from the Client
+    const rawcontext = EmailTemplateContext.find({ _id: { $in: template.context } }).fetch()
+    const clientContext = getContextClient(rawcontext, user, context)
 
-  // Add the default context 'User' and 'Site'
-  const userRawContext = EmailTemplateContext.findOne({ name: 'User' })
-  const emailContext = getContext([userRawContext], user, clientContext)
-  const doc = {
-    to: `${emailContext.user.firstName} <${emailContext.user.email}>`,
-    from: template.from,
-    subject: applyContext(template.subject, emailContext),
-    text: applyContext(template.body, emailContext),
-    templateId: template._id,
+    // Add the default context 'User' and 'Site'
+    const userRawContext = EmailTemplateContext.findOne({ name: 'User' })
+    const emailContext = getContext([userRawContext], user, clientContext)
+
+    const doc = {
+      to: `${emailContext.user.firstName} <${emailContext.user.email}>`,
+      from: template.from,
+      subject: applyContext(template.subject, emailContext),
+      text: applyContext(template.body, emailContext),
+      templateId: template._id,
+    }
+
+    return doc
+  } catch (error) {
+    throw new Meteor.Error('500', `Error in template Context ${templateName}`)
   }
-  return doc
-})
+}
 
 export const getFrom = (function getFrom(templateName) {
   const template = EmailTemplate.findOne({ name: templateName })

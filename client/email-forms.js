@@ -33,6 +33,7 @@ Template.emailForms.onRendered(function onRendered() {
     template.$('#templatepicker').select2({
       placeholder: 'Select an option',
       data: options,
+      multiple: false,
     })
   })
 })
@@ -44,6 +45,7 @@ Template.emailForms.helpers({
 Template.emailForms.events({
   'select2:select #templatepicker': (event, template) => {
     const id = template.$('#templatepicker :selected').val()
+    template.$('#templatepicker').select2('val', '')
     template.selected.set(EmailTemplate.findOne(id))
   },
   'click [data-action="new-template"]': (event, template) => {
