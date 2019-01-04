@@ -6,6 +6,10 @@ Package.describe({
   documentation: 'README.md',
 })
 
+Npm.depends({
+  'moment-timezone': '0.5.23',
+})
+
 Package.onUse((api) => {
   api.versionsFrom('1.6')
 

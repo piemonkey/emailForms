@@ -1,5 +1,5 @@
 import { SpacebarsCompiler } from 'meteor/spacebars-compiler'
-import { moment } from 'meteor/momentjs:moment'
+import moment from 'moment-timezone'
 import { EmailTemplate, EmailTemplateContext } from '../both/collection'
 
 /* XXX this should be a user setting */
